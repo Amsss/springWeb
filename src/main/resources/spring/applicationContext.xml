@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <!--<bean class="ctd.util.AppContextHolder">
+    </bean> -->
+
+    <!-- 注入事件监听器 -->
+    <bean id="startEvent" class="com.test3.StartListener" />
+    <bean id="stopEvent" class="com.test3.StopedListener" />
+
+    <bean id="sayHello" class="com.bsoft.adapter.controller.SayHelloImpl"></bean>
+    <bean id="singingAspect" class="com.bsoft.adapter.controller.SingingAspect"></bean>
+
+    <bean id="helloPost" class="com.test.HelloPost" init-method="init" destroy-method="destroy">
+        <property name="message" value="测试后处理器" />
+    </bean>
+
+    <!-- 容器后处理器的配置 -->
+    <bean class="com.test.FactoryPost" />
+    <!-- Bean后处理器的配置 -->
+    <bean class="com.test.HelloHander" />
+
+    <!-- 继承的配置 -->
+    <bean id="son" class="com.test1.Son" parent="parent">
+        <property name="msg1" value="test1" />
+        <property name="msg3" value="test3" />
+    </bean>
+
+    <bean id="parent" class="com.test1.Parent">
+        <property name="msg1" value="pptest1" />
+        <property name="msg2" value="pptest2" />
+    </bean>
+
+    <aop:config>
+        <aop:aspect ref="singingAspect">
+            <aop:pointcut id="embark" expression="execution(* *.sayHello(..))" />
+            <aop:before method="singBefore" pointcut-ref="embark" />
+            <aop:after method="singAfter" pointcut-ref="embark" />
+        </aop:aspect>
+    </aop:config>
+
+    <!-- 属性注入 -->
+    <bean id="person1" class="com.test2.Person">
+        <property name="name" value="成兮" />
+        <property name="age" value="20" />
+    </bean>
+    <bean id="person2" class="com.test2.Person">
+        <property name="name" value="缘分五月" />
+        <property name="age" value="20" />
+    </bean>
+    <bean id="allSet" class="com.test2.AllSetBean">
+        <!-- 注入数组 -->
+        <property name="names">
+            <list>
+                <value>成兮</value>
+                <value>缘分五月</value>
+            </list>
+        </property>
+        <!-- 注入List集合 -->
+        <property name="personlist">
+            <list>
+                <ref bean="person1" />
+                <ref bean="person2" />
+            </list>
+        </property>
+        <!-- 注入Set集合 -->
+        <property name="personset">
+            <set>
+                <ref bean="person1" />
+                <ref bean="person2" />
+            </set>
+        </property>
+        <!-- 注入Map集合 -->
+        <property name="personmap">
+            <map>
+                <entry key="1" value-ref="person1" />
+                <entry key="2" value-ref="person2" />
+            </map>
+        </property>
+        <!-- 注入属性值 -->
+        <property name="personprop">
+            <props>
+                <prop key="username">chengxi</prop>
+                <prop key="password">970624</prop>
+            </props>
+        </property>
+    </bean>
+</beans>
